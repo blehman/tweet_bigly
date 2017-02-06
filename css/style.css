@@ -1,0 +1,79 @@
+.container {
+  width: 890px;
+}
+
+#graphic {
+  padding-top: 60px;
+}
+
+
+#sections {
+  position: relative;
+  display: inline-block;
+  width: 250px;
+  top: 0px;
+  z-index: 90;
+  padding-bottom: 200px;
+}
+
+.step {
+  margin-bottom: 200px;
+  font-family: "TiemposTextWeb-Regular","Georgia";
+  font-size: 16px;
+  line-height: 23px;
+  color: #767678;
+}
+
+#sections .title {
+  font-family: Arial,Helvetica,"san-serif";
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 2px;
+  color: #262626;
+  line-height: 1.2em;
+}
+
+#extra-space {
+  height: 300px;
+}
+
+#vis {
+  display: inline-block;
+  position: fixed;
+  top: 60px;
+  margin-left: 0;
+  /*height: 600px; 
+  width: 600px; 
+  background-color: #ddd
+  */
+}
+
+#vis .title {
+  font-size:100px;
+  text-anchor: middle;
+}
+
+#vis .sub-title {
+  font-size:55px;
+  text-anchor: middle;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #666;
+  shape-rendering: crispEdges;
+}
+
+.highlight {
+  fill: #008080;
+  font-weight: bold;
+}
+
+.cough-arrow {
+  stroke: #000;
+  stroke-width: 4px;
+
+}
+
+
