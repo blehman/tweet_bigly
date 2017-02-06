@@ -162,7 +162,7 @@ var scrollVis = function(trumpVisData) {
     // donald image
     g.insert("image",":first-child")
       .attr("class","TheDonald")
-      .attr("xlink:href","/img/donald_cocktail.jpg")
+      .attr("xlink:href","img/donald_cocktail.jpg")
       .attr("x",width*0.56)
       .attr("y",height*-0.05)
     // count openvis title
@@ -237,7 +237,7 @@ var scrollVis = function(trumpVisData) {
     // Hillary image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheHill")
-      .attr("xlink:href","/img/hillary_clinton_2.jpg")
+      .attr("xlink:href","img/hillary_clinton_2.jpg")
       .attr("x",Net.width()*0.80)
       .attr("y",Net.height()*.13)
       .attr("opacity",0)
@@ -245,7 +245,7 @@ var scrollVis = function(trumpVisData) {
     // NYTimes image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout NYT")
-      .attr("xlink:href","/img/New_York_Times_logo_variation.jpg")
+      .attr("xlink:href","img/New_York_Times_logo_variation.jpg")
       .attr("x",Net.width()*0.80)
       .attr("y",Net.height()*0.30)
       .attr("opacity",0)
@@ -253,7 +253,7 @@ var scrollVis = function(trumpVisData) {
     // Cruz image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheCruzer")
-      .attr("xlink:href","/img/cruz-ted-bw.png")
+      .attr("xlink:href","img/cruz-ted-bw.png")
       .attr("x",Net.width()*0.82)
       .attr("y",Net.height()*0.43)
       .attr("opacity",0)
@@ -261,7 +261,7 @@ var scrollVis = function(trumpVisData) {
     // The Jeb image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheJeb")
-      .attr("xlink:href","/img/bush-jeb-bw.png")
+      .attr("xlink:href","img/bush-jeb-bw.png")
       .attr("x",Net.width()*0.76)
       .attr("y",Net.height()*0.43)
       .attr("opacity",0)
@@ -269,7 +269,7 @@ var scrollVis = function(trumpVisData) {
     // The Marco image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheMarco")
-      .attr("xlink:href","/img/rubio-marco.png")
+      .attr("xlink:href","img/rubio-marco.png")
       .attr("x",Net.width()*0.69)
       .attr("y",Net.height()*0.43)
       .attr("opacity",0)
@@ -277,7 +277,7 @@ var scrollVis = function(trumpVisData) {
     // The Kasich image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheKasich")
-      .attr("xlink:href","/img/kasich-john-bw.png")
+      .attr("xlink:href","img/kasich-john-bw.png")
       .attr("x",Net.width()*0.63)
       .attr("y",Net.height()*0.43)
       .attr("opacity",0)
@@ -285,7 +285,7 @@ var scrollVis = function(trumpVisData) {
     // The Bern image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheBern")
-      .attr("xlink:href","/img/sanders-bernard_bw.png")
+      .attr("xlink:href","img/sanders-bernard_bw.png")
       .attr("x",Net.width()*0.56)
       .attr("y",Net.height()*0.43)
       .attr("opacity",0)
@@ -293,7 +293,7 @@ var scrollVis = function(trumpVisData) {
     // Mainstream Media
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheMedia")
-      .attr("xlink:href","/img/Mainstream_Media_2.png")
+      .attr("xlink:href","img/Mainstream_Media_2.png")
       .attr("x",Net.width()*0.79)
       .attr("y",Net.height()*0.60)
       .attr("opacity",0)
@@ -302,7 +302,7 @@ var scrollVis = function(trumpVisData) {
     // Megan Kelly
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheMegan")
-      .attr("xlink:href","/img/megan_kelly.jpg")
+      .attr("xlink:href","img/megan_kelly.jpg")
       .attr("x",Net.width()*0.36)
       .attr("y",Net.height()*0.79)
       .attr("opacity",0)
@@ -310,7 +310,7 @@ var scrollVis = function(trumpVisData) {
     // Elizabeth Warren
     g.insert("image",":first-child")
       .attr("class","hbar_breakout TheWarren")
-      .attr("xlink:href","/img/elizabeth_warren.jpg")
+      .attr("xlink:href","img/elizabeth_warren.jpg")
       .attr("x",Net.width()*0.54)
       .attr("y",Net.height()*0.78)
       .attr("opacity",0)
@@ -319,7 +319,7 @@ var scrollVis = function(trumpVisData) {
     // SNL image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout SNL")
-      .attr("xlink:href","/img/snl_1.jpg")
+      .attr("xlink:href","img/snl_1.jpg")
       .attr("x",Net.width()*0.82)
       .attr("y",Net.height()*0.72)
       .attr("opacity",0)
@@ -328,7 +328,7 @@ var scrollVis = function(trumpVisData) {
     // Macy image
     g.insert("image",":first-child")
       .attr("class","hbar_breakout Macys")
-      .attr("xlink:href","/img/macys.png")
+      .attr("xlink:href","img/macys.png")
       .attr("x",Net.width()*0.06)
       .attr("y",Net.height()*0.80)
       .attr("opacity",0)
@@ -350,7 +350,7 @@ var scrollVis = function(trumpVisData) {
    // donald image
     g.insert("image",":first-child")
       .attr("class","TheDonald count-title")
-      .attr("xlink:href","/img/trump_point1.png")
+      .attr("xlink:href","img/trump_point1.png")
       .attr("x",width*0)
       .attr("y",height*0.6)
       .attr("width","200px")
