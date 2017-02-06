@@ -424,7 +424,7 @@ var scrollVis = function(trumpVisData) {
       */.attr("opacity", 0);
 
     // cough title
-    g.append("text")
+    /*g.append("text")
       .attr("class", "sub-title cough cough-title")
       .attr("x", width / 2)
       .attr("y", 60)
@@ -451,6 +451,7 @@ var scrollVis = function(trumpVisData) {
         return line;
       })
       .attr("opacity", 0);
+    */
   };
 
   /**
