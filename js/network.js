@@ -84,6 +84,8 @@ function network(visData){
     , group_counts = {}
     , group_dates = {}
     , grid_lookup   = {} //point values keyed by name
+    , total_name_counts = [] //data with additional value
+    , name_counts = {} //total count keyed on name
   ;
   var parseTime = d3.timeParse("%Y-%m-%d")
     , precison = d3.precisionRound(0.1, 1.1)
@@ -97,7 +99,11 @@ function network(visData){
     , gridXScale
     , gridYScale;
 
-  ;
+  var uniqHistSets = []
+    , xHistScale
+    , height_max
+    , yHistScale_array;
+
   // object created to provide an array of all dates for the particular group
   data_groups.forEach(function(d,i){
     group_dates[d] = []
@@ -108,18 +114,85 @@ function network(visData){
     // the chart function builds the simulation.
     // note: selection is passed in from the .call(Net), which is the same as Net(d3.select('.stuff')) -- ??
     selection.each(function(data){
-        console.log(data)
+        //console.log(data)
         // create date objects
         data.map(d => d.date = parseTime(d.date))
+
         var date_range = [];
         // count unique instance of each group
         data.forEach(function(d,i) {
           group_counts[d.group] = 1 + (group_counts[d.group] || 0);
           group_dates[d.group].push( d.date );
           date_range.push(d.date);
+          name_counts[d.name] = 1 + (name_counts[d.name] || 0);
         })
+
+        data.map(d => d.total = name_counts[d.name])
+        //console.log(data)
         date_extent = d3.extent(date_range)
 
+        // create hist data
+        var thresholds = [1,10,20,60,90,400]
+           , bins = d3.histogram()
+            .value(function(d) { return d.total; })
+            //.thresholds(x.ticks(d3.timeMonth))
+            .thresholds(thresholds)
+            (data);
+
+        console.log(bins)
+        //console.log(bins.map(d=>d.length))
+        bins.forEach(function(d,i){
+            var names_in_bucket = d.map(n => n.name);
+            var uniqSet = names_in_bucket.filter(uniq);
+            uniqHistSets.push(uniqSet)
+        })
+        //console.log(uniqHistSets)
+        var width_max = 0.8 * width;
+        var xHistRange = thresholds.map(d => (d-d3.min(thresholds))/(d3.max(thresholds)-d3.min(thresholds)) * width_max);
+
+        xHistScale = d3.scaleOrdinal()
+            .domain(thresholds)
+            .range(xHistRange);
+
+        console.log(xHistScale)
+        var bin_length_extent = d3.extent(bins.map(d => d.length));
+        var uniqHistSets_length_extent = d3.extent(uniqHistSets.map(d => d.length));
+        //console.log(bin_length_extent)
+
+        height_max = height*0.5
+
+        yHistScale_array = uniqHistSets.map(function(d,i){
+            // calculate height of each "bar"
+            //var height_factor = (d.length-bin_length_extent[0])/(bin_length_extent[1]-bin_length_extent[0])
+            var height_factor = (d.length-uniqHistSets_length_extent[0])/(uniqHistSets_length_extent[1]-uniqHistSets_length_extent[0])
+
+            var scaled_height =  (height_max)*(0.25 + ( 0.75 * height_factor)) ;
+            // calculate the padding between each "point" on the "bar"
+            var padding = scaled_height / d.length;
+            //console.log([d.length,d3.range(0,scaled_height,padding)])
+            //console.log([scaled_height,padding])
+            return d3.scaleOrdinal()
+                .domain(uniqHistSets[i])
+                .range(d3.range(height_max,height_max-scaled_height,-padding))
+            })
+        var hist_index_lookup = {};
+        uniqHistSets.map(function(d,i){
+          d.map(n => hist_index_lookup[n]=i)
+        })
+        data.map(function(d,i){
+            d.hist_index = hist_index_lookup[d.name]
+            d.threshold = thresholds[hist_index_lookup[d.name]]
+        })
+/*
+        data.map(function(d,i){
+          //console.log(['xHistScale(d.threshold))',xHistScale(d.threshold)])
+          console.log(d.hist_index)
+          console.log(d.name)
+          console.log(yHistScale_array.length)
+          console.log(['yHistScale_array[d.hist_index](d.name))',yHistScale_array[d.hist_index](d.name)])
+        })
+*/
+//        console.log(yHistScale_array)
 
         //var group_counts_minmax = d3.extent( data_groups.forEach(d => group_counts[d]) )
         //console.log(group_counts_minmax)
@@ -128,11 +201,11 @@ function network(visData){
           //, rangeY = d3.range(margin.left+(height*pStart),height*pEnd,(height*pDiff)/(data_groups.length))
           , rangeY = d3.range((height*pStart),height*pEnd,(height*pDiff)/(data_groups.length))
 
-         positionXScale = d3.scaleOrdinal().domain(data_groups).range(rangeX)
-         positionYScale = d3.scaleOrdinal().domain(data_groups).range(rangeY)
-         gridLength = Math.ceil(Math.sqrt(data_names.length))
-         gridXScale = d3.scaleOrdinal().domain(data_names).range(d3.range(0,width,width/gridLength))
-         gridYScale = d3.scaleOrdinal().domain(d3.range(gridLength)).range(d3.range(0,height,height/gridLength));
+        positionXScale = d3.scaleOrdinal().domain(data_groups).range(rangeX)
+        positionYScale = d3.scaleOrdinal().domain(data_groups).range(rangeY)
+        gridLength = Math.ceil(Math.sqrt(data_names.length))
+        gridXScale = d3.scaleOrdinal().domain(data_names).range(d3.range(0,width,width/gridLength))
+        gridYScale = d3.scaleOrdinal().domain(d3.range(gridLength)).range(d3.range(0,height,height/gridLength));
         // create grid lookup so each name has 1 point
         var counter=0,row=0;
 
@@ -216,6 +289,10 @@ function network(visData){
           nodes
             .attr("cx", function(d) {return d.x = Math.max(radius, Math.min(width - radius, d.x));} )
             .attr("cy", function(d) {return d.y = Math.max(radius, Math.min(height - radius, d.y));} )
+        }
+
+        function uniq(d, i, self) {
+          return self.indexOf(d) === i;
         }
 
         function forceZero(alpha) {
@@ -366,6 +443,24 @@ function network(visData){
                 .alphaTarget(0.3)
                 .alphaMin(0.1)
                 break;
+            case "hist":
+              simulation
+                .force("collision", d3.forceCollide(-1))
+                .force("center",forceZero)
+                .force("charge", forceZero)
+                .force("hillaryY", forceZero)
+                .force("NYTimesY", forceZero)
+                .force("cruzY", forceZero)
+                .force("randoY", forceZero)
+                .force("mainstreamY", forceZero)
+                .force("x", d3.forceX(function(d) {
+                  return xHistScale(d.threshold); }))
+                //.force("x", d3.forceX(d => d.cx))
+                .force("y", d3.forceY(function(d) { return yHistScale_array[d.hist_index](d.name)}))
+                .alphaDecay(0.4)
+                .alphaTarget(0.5)
+                .alphaMin(0.2)
+                break;
 
           }
         }
@@ -418,27 +513,43 @@ function network(visData){
   chart.data_groups = function(d) {
     if (!arguments.length) { return data_groups; }
     data_groups = d;
+    return chart;
   }
   chart.group_array = function(d) {
     if (!arguments.length) { return group_array; }
     group_array = d;
+    return chart;
   }
 
   chart.hbar_xAxis = function(h) {
     if (!arguments.length) { return hbar_xAxis; }
     hbar_xAxis = h;
+    return chart;
   }
   chart.hbar_xScale = function(h) {
     if (!arguments.length) { return hbar_xScale; }
     hbar_xScale = h;
+    return chart;
   }
   chart.positionYScale = function(p) {
     if (!arguments.length) { return positionYScale; }
     positionYScale = p;
+    return chart;
   }
   chart.group_colorer = function(g) {
     if (!arguments.length) { return group_colorer; }
     group_colorer = g;
+    return chart;
+  }
+  chart.xHistScale = function(x) {
+    if (!arguments.length) { return xHistScale; }
+    xHistScale = x;
+    return chart;
+  }
+  chart.height_max = function(h) {
+    if (!arguments.length) { return height_max; }
+    height_max = h;
+    return chart;
   }
     return chart
 // end of netowrk

@@ -374,6 +374,16 @@ var scrollVis = function(trumpVisData) {
     g.selectAll(".square")
       .attr("opacity", 0);
 
+    console.log(Net.height_max())
+    console.log(Net.xHistScale())
+    // histogram
+    // bar text & axis
+    g.append("g")
+        .attr("class","histogram xAxis")
+        .attr("opacity",0)
+        .attr("transform","translate ("+0+"," + Net.height_max()  + ")")
+        .call(d3.axisBottom(Net.xHistScale()));
+
     // square grid
     /*
     var squares = g.selectAll(".square").data(wordData);
@@ -700,6 +710,11 @@ var scrollVis = function(trumpVisData) {
       .duration(0)
       .attr("opacity", 0);
 
+    g.selectAll(".histogram")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0);
+
     g.selectAll(".hbar_breakout")
       .transition()
       .duration(600)
@@ -718,7 +733,7 @@ var scrollVis = function(trumpVisData) {
    */
   function showHistPart() {
     // switch the axis to histogram one
-
+    Net.sim_mode("hist")
     g.selectAll(".bar-text")
       .transition()
       .duration(0)
@@ -741,6 +756,16 @@ var scrollVis = function(trumpVisData) {
       .attr("height", function(d) { return (d.x < 15) ? height - yHistScale(d.y) : 0;  })
       .style("opacity", function(d,i) { return (d.x < 15) ? 1.0 : 1e-6; });
     */
+    g.selectAll(".hbar_breakout")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0);
+
+    g.selectAll(".histogram")
+      .transition()
+      .duration(600)
+      .attr("opacity", 1);
+
   }
 
   /**
