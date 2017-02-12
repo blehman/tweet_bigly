@@ -298,6 +298,14 @@ var scrollVis = function(trumpVisData) {
       .attr("y",Net.height()*0.60)
       .attr("opacity",0)
       .attr("width","90px")
+
+     g.insert("image",":first-child")
+      .attr("class","hbar_breakout Others")
+      .append("text")
+      .attr("x",Net.width()*0.79)
+      .attr("y",Net.height()*0.50)
+      .attr("opacity",0)
+      .text("All Others")
     /*
     // Megan Kelly
     g.insert("image",":first-child")
@@ -379,10 +387,17 @@ var scrollVis = function(trumpVisData) {
     // histogram
     // bar text & axis
     g.append("g")
-        .attr("class","histogram xAxis")
+        .attr("class","histogram xAxis1")
         .attr("opacity",0)
-        .attr("transform","translate ("+0+"," + Net.height_max()  + ")")
+        .attr("transform","translate ("+0+"," + (Net.height_max()+45.0)  + ")")
         .call(d3.axisBottom(Net.xHistScale()));
+
+    g.append("g")
+        .attr("class","histogram xAxis2")
+        .attr("opacity",0)
+        .attr("transform","translate ("+0+"," + (Net.height_max()+5.0)  + ")")
+        .call(d3.axisBottom(Net.xHistScale()));
+
 
     // square grid
     /*
@@ -710,7 +725,7 @@ var scrollVis = function(trumpVisData) {
       .duration(0)
       .attr("opacity", 0);
 
-    g.selectAll(".histogram")
+    g.selectAll(".histogram.xAxis1")
       .transition()
       .duration(0)
       .attr("opacity", 0);
@@ -719,7 +734,6 @@ var scrollVis = function(trumpVisData) {
       .transition()
       .duration(600)
       .attr("opacity", 1);
-
   }
 
   /**
@@ -734,6 +748,9 @@ var scrollVis = function(trumpVisData) {
   function showHistPart() {
     // switch the axis to histogram one
     Net.sim_mode("hist")
+    Net.collision_factor(4)
+    Net.sim_mode("set_collision")
+
     g.selectAll(".bar-text")
       .transition()
       .duration(0)
@@ -743,8 +760,6 @@ var scrollVis = function(trumpVisData) {
       .transition()
       .duration(600)
       .attr("width", 0);
-
-
 
     // here we only show a bar if
     // it is before the 15 minute mark
@@ -761,7 +776,10 @@ var scrollVis = function(trumpVisData) {
       .duration(0)
       .attr("opacity", 0);
 
-    g.selectAll(".histogram")
+    g.selectAll(".histogram.xAxis2")
+      .attr("opacity", 0);
+
+    g.selectAll(".histogram.xAxis1")
       .transition()
       .duration(600)
       .attr("opacity", 1);
@@ -781,25 +799,22 @@ var scrollVis = function(trumpVisData) {
   function showHistAll() {
     // ensure the axis to histogram one
     //showAxis(xAxisHist);
+    Net.sim_mode("hist")
 
-    g.selectAll(".cough")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
+    //d3.selectAll('.histogram.axis')
+    //  .attr("transform","translate(0,"+Net.max_height()+5+")")
 
     // named transition to ensure
     // color change is not clobbered
-    g.selectAll(".hist")
-      .transition("color")
-      .duration(500)
-      .style("fill", "#008080");
 
-    g.selectAll(".hist")
+    g.selectAll(".histogram.xAxis1")
+      .attr("opacity", 0);
+
+    g.selectAll(".histogram.xAxis2")
       .transition()
-      .duration(1200)
-      .attr("y", function(d) { return yHistScale(d.y); })
-      .attr("height", function(d) { return  height - yHistScale(d.y);  })
-      .style("opacity", 1.0);
+      .duration(600)
+      .attr("opacity", 1);
+
   }
 
   /**

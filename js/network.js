@@ -104,6 +104,8 @@ function network(visData){
     , height_max
     , yHistScale_array;
 
+  var collision_factor;
+
   // object created to provide an array of all dates for the particular group
   data_groups.forEach(function(d,i){
     group_dates[d] = []
@@ -132,7 +134,7 @@ function network(visData){
         date_extent = d3.extent(date_range)
 
         // create hist data
-        var thresholds = [1,10,20,60,90,400]
+        var thresholds = [1,10,30,60,90,200,300,400]
            , bins = d3.histogram()
             .value(function(d) { return d.total; })
             //.thresholds(x.ticks(d3.timeMonth))
@@ -147,7 +149,7 @@ function network(visData){
             uniqHistSets.push(uniqSet)
         })
         //console.log(uniqHistSets)
-        var width_max = 0.8 * width;
+        var width_max = 0.90 * width;
         var xHistRange = thresholds.map(d => (d-d3.min(thresholds))/(d3.max(thresholds)-d3.min(thresholds)) * width_max);
 
         xHistScale = d3.scaleOrdinal()
@@ -160,21 +162,30 @@ function network(visData){
         //console.log(bin_length_extent)
 
         height_max = height*0.5
-
+        var scale;
         yHistScale_array = uniqHistSets.map(function(d,i){
             // calculate height of each "bar"
             //var height_factor = (d.length-bin_length_extent[0])/(bin_length_extent[1]-bin_length_extent[0])
-            var height_factor = (d.length-uniqHistSets_length_extent[0])/(uniqHistSets_length_extent[1]-uniqHistSets_length_extent[0])
-
-            var scaled_height =  (height_max)*(0.25 + ( 0.75 * height_factor)) ;
-            // calculate the padding between each "point" on the "bar"
-            var padding = scaled_height / d.length;
-            //console.log([d.length,d3.range(0,scaled_height,padding)])
-            //console.log([scaled_height,padding])
-            return d3.scaleOrdinal()
+            // height as a factor of the number of unique names in the bin
+            scale = d3.scaleOrdinal()
                 .domain(uniqHistSets[i])
-                .range(d3.range(height_max,height_max-scaled_height,-padding))
-            })
+                .range(d3.range(uniqHistSets[i].length).map(d =>height_max - (d*(3*radius)) ))
+
+            if (i==0){
+              var height_factor = (d.length-uniqHistSets_length_extent[0])/(uniqHistSets_length_extent[1]-uniqHistSets_length_extent[0])
+              // height as a percentage of the total height with a minimum size for those bins
+              var scaled_height =  (height_max)*(0.25 + ( 0.75 * height_factor)) ;
+              // calculate the padding between each "point" on the "bar"
+              var padding = scaled_height / d.length;
+              var yHistRange = d3.range(height_max,height_max-scaled_height,-padding);
+              //console.log([d.length,d3.range(0,scaled_height,padding)])
+              //console.log([scaled_height,padding])
+              scale = d3.scaleOrdinal()
+                  .domain(uniqHistSets[i])
+                  .range(yHistRange)
+            }
+            return scale
+        })
         var hist_index_lookup = {};
         uniqHistSets.map(function(d,i){
           d.map(n => hist_index_lookup[n]=i)
@@ -453,13 +464,16 @@ function network(visData){
                 .force("cruzY", forceZero)
                 .force("randoY", forceZero)
                 .force("mainstreamY", forceZero)
-                .force("x", d3.forceX(function(d) {
-                  return xHistScale(d.threshold); }))
+                .force("x", d3.forceX(function(d) { return xHistScale(d.threshold); }))
                 //.force("x", d3.forceX(d => d.cx))
                 .force("y", d3.forceY(function(d) { return yHistScale_array[d.hist_index](d.name)}))
                 .alphaDecay(0.4)
                 .alphaTarget(0.5)
                 .alphaMin(0.2)
+                break;
+            case "set_collision":
+              simulation
+                .force("collision", d3.forceCollide(collision_factor))
                 break;
 
           }
@@ -551,6 +565,12 @@ function network(visData){
     height_max = h;
     return chart;
   }
+  chart.collision_factor = function(c) {
+    if (!arguments.length) { return collision_factor; }
+    collision_factor = c;
+    return chart;
+  }
+
     return chart
 // end of netowrk
 }
