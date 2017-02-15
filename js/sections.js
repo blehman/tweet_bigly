@@ -1,4 +1,3 @@
-
 /**
  * scrollVis - encapsulates
  * all the code for the visualization
@@ -84,7 +83,7 @@ var scrollVis = function(trumpVisData) {
   // through the section with the current
   // progress through the section.
   var updateFunctions = [];
-
+  var tweet_create_event = d3.dispatch('tweet_create_event')
   /**
    * chart
    *
@@ -158,27 +157,22 @@ var scrollVis = function(trumpVisData) {
     Net.data_groups([ "US Political","News","US Business","Random", "Foreign Interest","Famous"])
 
     network_selection.call(Net)
-
     // donald image
     g.insert("image",":first-child")
       .attr("class","TheDonald")
       .attr("xlink:href","img/donald_cocktail.jpg")
       .attr("x",width*0.56)
       .attr("y",height*-0.05)
+
     // count openvis title
     g.append("text")
       .attr("class", "sub-title openvis-title")
       .attr("x", width / 2)
-      .attr("y", height / 3 + (height / 5) )
+      .attr("y", height / 1.4 + (height / 5))
       .text("June 2015 - Jan 2017");
 
-    g.append("text")
-      .attr("class", "title openvis-title highlight")
-      .attr("x", width / 2)
-      .attr("y", (height / 6) )
-      //.attr("stroke","white")
-      //.attr("text-shadow","2px 2px white:")
-      .text("Tweet");
+    //tweet_create_event.on('tweet_create_event',opacityZero())
+    //tweet_create_event.call('tweet_create_event')
 
     g.append("text")
       .attr("class", "title openvis-title highlight")
@@ -186,7 +180,19 @@ var scrollVis = function(trumpVisData) {
       .attr("y", (height / 3) )
       //.attr("stroke","white")
       //.attr("text-shadow","2px 2px white:")
-      .text("Bigly");
+      .text("Tweet")
+      .style("stroke","#444")
+      .style("stroke-width","0.4px");
+
+    g.append("text")
+      .attr("class", "title openvis-title highlight")
+      .attr("x", width / 2)
+      .attr("y", (height / 2) )
+      //.attr("stroke","white")
+      //.attr("text-shadow","2px 2px white:")
+      .text("Bigly")
+      .style("stroke","#444")
+      .style("stroke-width","0.4px");
 
     g.selectAll(".openvis-title")
       .attr("opacity", 0);
@@ -211,6 +217,7 @@ var scrollVis = function(trumpVisData) {
         .attr("r",10)
         .attr("stroke","white")
         .attr("stroke-opacity",0.5);
+
    g.append("g")
         .attr("class","hbar legend-text")
         .attr("opacity",0)
@@ -222,11 +229,6 @@ var scrollVis = function(trumpVisData) {
         .attr("y", d => Net.positionYScale()(d.group)+3)
         .attr("font-size", "13px")
         .text(d=>d.group);
-
-        /*.selectAll("circle")
-        .data(Net.)
-        .attr("opacity",0);
-        */
 
     // hbar_breakout text & axis
     g.append("g")
@@ -298,7 +300,7 @@ var scrollVis = function(trumpVisData) {
       .attr("y",Net.height()*0.60)
       .attr("opacity",0)
       .attr("width","90px")
-
+    //
      g.insert("image",":first-child")
       .attr("class","hbar_breakout Others")
       .append("text")
@@ -346,14 +348,50 @@ var scrollVis = function(trumpVisData) {
     g.append("text")
       .attr("class", "title count-title highlight")
       .attr("x", width / 2)
-      .attr("y", height / 3)
-      .text("2,200");
+      .attr("y", height / 2)
+      .text("2,200+")
+      .style("stroke","#444")
+      .style("stroke-width","0.4px");
 
     g.append("text")
       .attr("class", "sub-title count-title")
       .attr("x", width / 2)
-      .attr("y", (height / 3) + (height / 5) )
+      .attr("y", (height / 1.4) + (height / 5) )
       .text("Direct Insults");
+
+    // create foreignObject container
+    g.insert("g",":first-child")
+      .attr("id","foreignObject_container")
+     .insert("foreignObject",":first-child")
+      .attr("id","tweet_render")
+      .attr("x",width*0.145)
+      .attr("y",height*0.22)
+      .attr("width",450);
+
+    // render Tweet in foreign object
+    twttr.ready(
+      function (twttr) {
+        twttr.widgets.createTweet(
+          '820764134857969666',
+          document.getElementById('tweet_render'),
+          {
+            theme: ''
+            , conversation: 'none'
+            , dnt: true
+            , hide_thread: true
+          }
+        );
+        //tweet opacity to 0
+        twttr.events.bind('rendered', function (event) {
+            var opacity=0;
+            if (Net.sim_mode() == "explode"){
+              opacity=1;
+            }
+            d3.selectAll(".twitter-tweet").style("opacity",opacity)
+        })
+      }
+    )
+
 /*
    // donald image
     g.insert("image",":first-child")
@@ -370,113 +408,85 @@ var scrollVis = function(trumpVisData) {
     g.append("text")
       .attr("class", "title square highlight")
       .attr("x", width / 2)
-      .attr("y", height / 3)
-      .text("300");
+      .attr("y", height / 2)
+      .text("300+")
+      .style("stroke","#444")
+      .style("stroke-width","0.4px");
 
     g.append("text")
       .attr("class", "sub-title square")
       .attr("x", width / 2)
-      .attr("y", (height / 3) + (height / 5) )
+      .attr("y", height / 1.4 + (height / 5) )
       .text("Insultees");
 
     g.selectAll(".square")
       .attr("opacity", 0);
 
-    console.log(Net.height_max())
-    console.log(Net.xHistScale())
     // histogram
     // bar text & axis
     g.append("g")
-        .attr("class","histogram xAxis1")
-        .attr("opacity",0)
-        .attr("transform","translate ("+0+"," + (Net.height_max()+45.0)  + ")")
-        .call(d3.axisBottom(Net.xHistScale()));
+      .attr("class","histogram xAxis1")
+      .attr("opacity",0)
+      .attr("transform","translate ("+0+"," + (Net.height_max()+45.0)  + ")")
+      .call(d3.axisBottom(Net.xHistScale()));
+
+    g.append("g")
+      .attr("class","histogram xAxis2")
+      .attr("opacity",0)
+      .attr("transform","translate ("+0+"," + (Net.height_max()+5.0)  + ")")
+      .call(d3.axisBottom(Net.xHistScale()));
+
+    // count openvis title
+    g.append("text")
+      .attr("class", "sub-title histogram_txt")
+      .attr("opacity",0)
+      .attr("x", width / 2)
+      .attr("y", height / 3 + (height / 5) )
+      .text("");
+/*
+    g.append("text")
+      .attr("class", "title histogram_txt highlight")
+      .attr("opacity",0)
+      .attr("x", width / 2)
+      .attr("y", (height / 6) )
+      //.attr("stroke","white")
+      //.attr("text-shadow","2px 2px white:")
+      .text("");
+
+    g.append("text")
+      .attr("class", "title histogram_txt highlight")
+      .attr("opacity",0)
+      .attr("x", width / 2)
+      .attr("y", (height / 3) )
+      .text("Insult Count");
+*/
+
+    var yHistAxis = d3.axisLeft(Net.yHistScale2())
+      .tickValues([1,5,10,15,20,25])
 
     g.append("g")
         .attr("class","histogram xAxis2")
         .attr("opacity",0)
-        .attr("transform","translate ("+0+"," + (Net.height_max()+5.0)  + ")")
-        .call(d3.axisBottom(Net.xHistScale()));
+        .attr("transform","translate ("+ 0 +"," + 0 + ")")
+        .call(yHistAxis);
 
-
-    // square grid
-    /*
-    var squares = g.selectAll(".square").data(wordData);
-    squares.enter()
-      .append("rect")
-      .attr("width", squareSize)
-      .attr("height", squareSize)
-      .attr("fill", "#fff")
-      .classed("square", true)
-      .classed("fill-square", function(d) { return d.filler; })
-      .attr("x", function(d) { return d.x;})
-      .attr("y", function(d) { return d.y;})
-      .attr("opacity", 0);
-    */
     // barchart
     var bars = g.selectAll(".bar").data(fillerCounts);
     bars.enter()
       .append("div")
       .attr("class", "bar")
-      /*.attr("x", 0)
-      .attr("y", function(d,i) { return yBarScale(i);})
-      .attr("fill", function(d,i) { return barColors[i]; })
-      .attr("width", 0)
-      .attr("height", yBarScale.bandwidth());
-      */
+
     var barText = g.selectAll(".bar-text").data(fillerCounts);
     barText.enter()
       .append("text")
       .attr("class", "bar-text")
-    /*  .text(function(d) { return d.key + "…"; })
-      .attr("x", 0)
-      .attr("dx", 15)
-      .attr("y", function(d,i) { return yBarScale(i);})
-      .attr("dy", yBarScale.bandwidth() / 1.2)
-      .style("font-size", "110px")
-      .attr("fill", "white")
-      .attr("opacity", 0);
-     */
+
     // histogram
     var hist = g.selectAll(".hist").data(histData);
     hist.enter().append("div")
       .attr("class", "hist")
-      /*.attr("x", function(d) { return xHistScale(d.x); })
-      .attr("y", height)
-      .attr("height", 0)
-      .attr("width", xHistScale(histData[0].dx) - 1)
-      .attr("fill", barColors[0])
-      */.attr("opacity", 0);
-
-    // cough title
-    /*g.append("text")
-      .attr("class", "sub-title cough cough-title")
-      .attr("x", width / 2)
-      .attr("y", 60)
-      .text("News")
       .attr("opacity", 0);
 
-    // arrowhead from
-    // http://logogin.blogspot.com/2013/02/d3js-arrowhead-markers.html
-    svg.append("defs").append("marker")
-      .attr("id", "arrowhead")
-      .attr("refY", 2)
-      .attr("markerWidth", 6)
-      .attr("markerHeight", 4)
-      .attr("orient", "auto")
-      .append("path")
-      .attr("d", "M 0,0 V 4 L6,2 Z");
-
-    g.append("path")
-      .attr("class", "cough cough-arrow")
-      .attr("marker-end", "url(#arrowhead)")
-      .attr("d", function() {
-        var line = "M " + ((width / 2) - 10) + " " + 80;
-        line += " l 0 " + 230;
-        return line;
-      })
-      .attr("opacity", 0);
-    */
   };
 
   /**
@@ -496,7 +506,7 @@ var scrollVis = function(trumpVisData) {
     activateFunctions[4] = showBar;
     activateFunctions[5] = showHistPart;
     activateFunctions[6] = showHistAll;
-    activateFunctions[7] = showCough;
+    activateFunctions[7] = showTweet;
     activateFunctions[8] = showHistAll;
 
     // updateFunctions are called while
@@ -534,14 +544,77 @@ var scrollVis = function(trumpVisData) {
    * shows: intro title
    *
    */
-  function showTitle() {
-    Net.sim_mode("center")
-    d3.selectAll(".node").transition().duration(2000).attr("stroke","white").attr("stroke-opacity",0.5).attr("fill-opacity",1)
+
+  opacityZero = function(){
+    console.log("opacityZero()")
 
     g.selectAll(".count-title")
       .transition()
       .duration(0)
       .attr("opacity", 0);
+
+    g.selectAll(".openvis-title")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0.0);
+
+    g.selectAll(".TheDonald")
+      .transition()
+      .duration(1000)
+      .attr("opacity", 0);
+
+    g.selectAll(".bar-text")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0);
+
+    g.selectAll(".hbar")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0);
+
+    g.selectAll(".hbar_breakout")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0);
+
+    g.selectAll(".square")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0)
+
+    g.selectAll(".fill-square")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0);
+
+    g.selectAll(".xAxis1")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0);
+
+    g.selectAll(".xAxis2")
+      .transition()
+      .duration(0)
+      .attr("opacity", 0);
+
+    g.selectAll(".hist")
+      .transition()
+      .duration(0)
+      .style("opacity", 0);
+
+    g.selectAll(".histogram_txt")
+      .transition()
+      .duration(0)
+      .style("opacity", 0);
+
+    d3.selectAll(".twitter-tweet").style("opacity",0)
+
+  }
+
+  function showTitle() {
+    Net.sim_mode("center")
+    opacityZero()
 
     g.selectAll(".openvis-title")
       .transition()
@@ -563,33 +636,14 @@ var scrollVis = function(trumpVisData) {
    *
    */
   function showFillerTitle() {
-    d3.selectAll(".node").transition().duration(2000).attr("stroke","white").attr("stroke-opacity",0.5).attr("fill-opacity",1)
-
-    g.selectAll(".openvis-title")
-      .transition()
-      .duration(400)
-      .attr("opacity", 0);
-
-    g.selectAll(".TheDonald")
-      .transition()
-      .duration(1000)
-      .attr("opacity", 0);
-
-    g.selectAll(".square")
+    opacityZero()
+    Net.sim_mode("explode")
+    d3.selectAll(".twitter-tweet")
       .transition()
       .duration(0)
-      .attr("opacity", 0);
+      .style("opacity",1)
 
-    g.selectAll(".hbar")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
 
-    g.selectAll(".count-title")
-      .transition()
-      .duration(600)
-      .attr("opacity", 1.0);
-    Net.sim_mode("expand")
   }
 
   /**
@@ -601,31 +655,9 @@ var scrollVis = function(trumpVisData) {
    *
    */
   function showGrid() {
-    Net.sim_mode("hbar")
-    d3.selectAll(".node").transition().duration(1000).attr("stroke","white").attr("stroke-opacity",0.5).attr("fill-opacity",1)
-
-    g.selectAll(".fill-square")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
+    opacityZero()
+    Net.sim_mode("expand")
     g.selectAll(".count-title")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0.0);
-      //.attr("fill", "#ddd");
-
-    g.selectAll(".square")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0.0);
-
-    g.selectAll(".hbar_breakout")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-    g.selectAll(".hbar")
       .transition()
       .duration(600)
       .attr("opacity", 1.0);
@@ -641,35 +673,11 @@ var scrollVis = function(trumpVisData) {
    *  filler words. also ensures squares
    *  are moved back to their place in the grid
    */
+
   function highlightGrid() {
     Net.sim_mode('grid')
 
-    g.selectAll(".bar-text")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-    g.selectAll(".hbar")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-
-    g.selectAll(".square")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0)
-      //.attr("fill", "#ddd");
-
-    g.selectAll(".count-title")
-      .transition()
-      .duration(600)
-      .attr("opacity", 0.0)
-      //.attr("fill", function(d) { return d.filler ? '#008080' : '#ddd'; });
-    g.selectAll(".hbar_breakout")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
+    opacityZero()
 
     // use named transition to ensure
     // move happens even if other
@@ -681,59 +689,17 @@ var scrollVis = function(trumpVisData) {
 
   }
 
-  /**
-   * showBar - barchart
-   *
-   * hides: square grid
-   * hides: histogram
-   * shows: barchart
-   *
-   */
   function showBar() {
-    Net.sim_mode("hbar_breakout")
-    // ensure bar axis is set
-    //showAxis(xAxisBar);
+    // ensure the axis to histogram one
+    //showAxis(xAxisHist);
+    Net.sim_mode("hbar")
 
-    g.selectAll(".square")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-    g.selectAll(".fill-square")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-    g.selectAll(".hist")
-      .transition()
-      .duration(600)
-      .style("opacity", 0);
-/*
-    g.selectAll(".bar")
-      .transition()
-      .delay(function(d,i) { return 300 * (i + 1);})
-      .duration(600)
-      .attr("width", function(d) { return xBarScale(d.values); });
-*/
-    g.selectAll(".hbar_breakout")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
+    opacityZero()
 
     g.selectAll(".hbar")
       .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-    g.selectAll(".histogram.xAxis1")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-    g.selectAll(".hbar_breakout")
-      .transition()
       .duration(600)
-      .attr("opacity", 1);
+      .attr("opacity", 1.0);
   }
 
   /**
@@ -746,121 +712,57 @@ var scrollVis = function(trumpVisData) {
    *
    */
   function showHistPart() {
-    // switch the axis to histogram one
-    Net.sim_mode("hist")
-    Net.collision_factor(4)
-    Net.sim_mode("set_collision")
+     Net.sim_mode("hbar_breakout")
+    // ensure bar axis is set
+    //showAxis(xAxisBar);
+    opacityZero()
 
-    g.selectAll(".bar-text")
-      .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-    g.selectAll(".bar")
-      .transition()
-      .duration(600)
-      .attr("width", 0);
-
-    // here we only show a bar if
-    // it is before the 15 minute mark
-    /*
-    g.selectAll(".hist")
-      .transition()
-      .duration(600)
-      .attr("y", function(d) { return (d.x < 15) ? yHistScale(d.y) : height; })
-      .attr("height", function(d) { return (d.x < 15) ? height - yHistScale(d.y) : 0;  })
-      .style("opacity", function(d,i) { return (d.x < 15) ? 1.0 : 1e-6; });
-    */
     g.selectAll(".hbar_breakout")
       .transition()
-      .duration(0)
-      .attr("opacity", 0);
-
-    g.selectAll(".histogram.xAxis2")
-      .attr("opacity", 0);
-
-    g.selectAll(".histogram.xAxis1")
-      .transition()
       .duration(600)
       .attr("opacity", 1);
 
+    // switch the axis to histogram one
+    //Net.sim_mode("hist")
+    //Net.collision_factor(4)
+    //Net.sim_mode("set_collision")
+
   }
 
-  /**
-   * showHistAll - show all histogram
-   *
-   * hides: cough title and color
-   * (previous step is also part of the
-   *  histogram, so we don't have to hide
-   *  that)
-   * shows: all histogram bars
-   *
-   */
   function showHistAll() {
-    // ensure the axis to histogram one
-    //showAxis(xAxisHist);
     Net.sim_mode("hist")
 
-    //d3.selectAll('.histogram.axis')
-    //  .attr("transform","translate(0,"+Net.max_height()+5+")")
-
-    // named transition to ensure
-    // color change is not clobbered
-
-    g.selectAll(".histogram.xAxis1")
-      .attr("opacity", 0);
+    opacityZero()
 
     g.selectAll(".histogram.xAxis2")
       .transition()
       .duration(600)
       .attr("opacity", 1);
 
-  }
-
-  /**
-   * showCough
-   *
-   * hides: nothing
-   * (previous and next sections are histograms
-   *  so we don't have to hide much here)
-   * shows: histogram
-   *
-   */
-  function showCough() {
-    // ensure the axis to histogram one
-    //showAxis(xAxisHist);
-
-    g.selectAll(".hist")
+    g.selectAll(".histogram_txt")
       .transition()
-      .duration(600)
-      .attr("y", function(d) { return yHistScale(d.y); })
-      .attr("height", function(d) { return  height - yHistScale(d.y);  })
-      .style("opacity", 1.0);
-  }
-
-  /**
-   * showAxis - helper function to
-   * display particular xAxis
-   *
-   * @param axis - the axis to show
-   *  (xAxisHist or xAxisBar)
-   */
-  function showAxis(axis) {
-    g.select(".x.axis")
-      .call(axis)
-      .transition().duration(500)
+      .duration(0)
       .style("opacity", 1);
   }
 
-  /**
-   * hideAxis - helper function
-   * to hide the axis
-   *
-   */
+  function showTweet() {
+    opacityZero()
+    Net.sim_mode("explode")
+    d3.selectAll(".twitter-tweet")
+      .transition()
+      .duration(0)
+      .style("opacity",1)
+
+  }
+
+  function showAxis(axis) {
+    opacityZero()
+
+  }
+
   function hideAxis() {
-    g.select(".x.axis")
-      .transition().duration(500)
-      .style("opacity",0);
+    opacityZero()
+
   }
 
   /**
@@ -883,17 +785,8 @@ var scrollVis = function(trumpVisData) {
    *  how far user has scrolled in section
    */
   function updateCough(progress) {
-    g.selectAll(".cough")
-      .transition()
-      .duration(0)
-      .attr("opacity", progress);
+    //opacityZero()
 
-    g.selectAll(".hist")
-      .transition("cough")
-      .duration(0)
-      .style("fill", function(d,i) {
-        return (d.x >= 14) ? coughColorScale(progress) : "#008080";
-      });
   }
 
   /**
@@ -1026,8 +919,6 @@ function display(error,data,trumpVisData) {
     .datum(data)
     .call(plot);
 
-
-
   // setup scroll functionality
   var scroll = scroller()
     .container(d3.select('#graphic'));
@@ -1053,7 +944,8 @@ function display(error,data,trumpVisData) {
 // load data and display
 //d3.tsv("data/words.tsv", display);
 var q = d3.queue();
-q.defer(d3.tsv, 'data/words.tsv')
-.defer(d3.json, "data/2017-01-27_full_insult_list.json")
-.await(display);
+  q.defer(d3.tsv, 'data/words.tsv')
+    .defer(d3.json, "data/2017-01-27_full_insult_list.json")
+    .await(display);
+
 

@@ -102,7 +102,10 @@ function network(visData){
   var uniqHistSets = []
     , xHistScale
     , height_max
-    , yHistScale_array;
+    , width_max
+    , yHistScale_array
+    , yHistScale2
+    , x_fudge;
 
   var collision_factor;
 
@@ -134,7 +137,7 @@ function network(visData){
         date_extent = d3.extent(date_range)
 
         // create hist data
-        var thresholds = [1,10,30,60,90,200,300,400]
+        var thresholds = [1,10,45,90,200,300,400]
            , bins = d3.histogram()
             .value(function(d) { return d.total; })
             //.thresholds(x.ticks(d3.timeMonth))
@@ -149,20 +152,23 @@ function network(visData){
             uniqHistSets.push(uniqSet)
         })
         //console.log(uniqHistSets)
-        var width_max = 0.90 * width;
-        var xHistRange = thresholds.map(d => (d-d3.min(thresholds))/(d3.max(thresholds)-d3.min(thresholds)) * width_max);
+        width_max = 0.90 * width;
+        var xHistRange = thresholds.map(d => ((d-d3.min(thresholds))/(d3.max(thresholds)-d3.min(thresholds)) * width_max));
 
         xHistScale = d3.scaleOrdinal()
             .domain(thresholds)
             .range(xHistRange);
 
-        console.log(xHistScale)
         var bin_length_extent = d3.extent(bins.map(d => d.length));
         var uniqHistSets_length_extent = d3.extent(uniqHistSets.map(d => d.length));
         //console.log(bin_length_extent)
 
         height_max = height*0.5
         var scale;
+        yHistScale2 = d3.scaleOrdinal()
+                .domain(d3.range(1,1+uniqHistSets[1].length))
+                .range(d3.range(1+uniqHistSets[1].length).map(d =>height_max - (d*(3*radius)) ))
+
         yHistScale_array = uniqHistSets.map(function(d,i){
             // calculate height of each "bar"
             //var height_factor = (d.length-bin_length_extent[0])/(bin_length_extent[1]-bin_length_extent[0])
@@ -282,11 +288,14 @@ function network(visData){
           .append("circle")
           .attr("class", "node")
           .style("fill",d => group_colorer(d.group))
+          .attr("name",d => d.name)
+          .attr("group",d => d.group)
           .style("stroke-width", 2)
           .attr("r",radius)
-          .attr("opacity",node_opacity)
-          .attr("name",d => d.name)
-          .attr("group",d => d.group);
+          .attr("opacity",1)
+          .attr("stroke","white")
+          .attr("stroke-opacity",0.5)
+          .attr("fill-opacity",1)
 /*
         nodes.append("image")
           .attr("xlink:href", "https://github.com/favicon.ico")
@@ -475,12 +484,28 @@ function network(visData){
               simulation
                 .force("collision", d3.forceCollide(collision_factor))
                 break;
+            case "explode":
+              simulation
+                .force("collision", d3.forceCollide(4))
+                .force("center",forceZero)
+                .force("charge", d3.forceManyBody().strength(-1))
+                .force("hillaryY", forceZero)
+                .force("NYTimesY", forceZero)
+                .force("cruzY", forceZero)
+                .force("randoY", forceZero)
+                .force("mainstreamY", forceZero)
+                .force("x", forceZero)
+                //.force("x", d3.forceX(d => d.cx))
+                .force("y", forceZero)
+                .alphaDecay(0.4)
+                .alphaTarget(1)
+                .alphaMin(0.5)
+                break;
 
           }
         }
 
       dispatch_net.on("sim_update", updateSimulation)
-
 
     // End of selection
     })
@@ -565,9 +590,29 @@ function network(visData){
     height_max = h;
     return chart;
   }
+  chart.width_max = function(h) {
+    if (!arguments.length) { return width_max; }
+    width_max = h;
+    return chart;
+  }
   chart.collision_factor = function(c) {
     if (!arguments.length) { return collision_factor; }
     collision_factor = c;
+    return chart;
+  }
+  chart.yHistScale_array = function(y) {
+    if (!arguments.length) { return yHistScale_array; }
+    yHistScale_array = y;
+    return chart;
+  }
+  chart.yHistScale2 = function(y) {
+    if (!arguments.length) { return yHistScale2; }
+    yHistScale2 = y;
+    return chart;
+  }
+  chart.x_fudge = function(f) {
+    if (!arguments.length) { return x_fudge; }
+    x_fudge = f;
     return chart;
   }
 

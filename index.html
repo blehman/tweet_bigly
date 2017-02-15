@@ -1,54 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Scrolling Sections</title>
+  <title>Tweet Bigly</title>
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
   <link rel="stylesheet" type="text/css" href="css/style.css"/>
+  <script>
+
+    window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+
+      return t;
+    }(document, "script", "twitter-wjs"));
+  </script>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/d3-queue.v3.min.js"></script>
-  <script src="js/queue.js"></script>
+  <!--<script src="js/queue.js"></script>-->
   <script src="js/scroller.js"></script>
-  <script src="js/sections.js"></script>
   <script src="js/network.js" type="text/javascript"></script>
 </head>
 <body>
+<script src="js/sections.js"></script>
+
 <div class="container">
   <div id='graphic'>
     <div id='sections'>
       <section class="step">
         <div class="title">Tweet to President</div>
-        <i>The New York Times</i> has an <a href="https://www.nytimes.com/interactive/2016/01/28/upshot/donald-trump-twitter-insults.html" target="_blank">article</a> commemorating Trump's continued use of what may well be his favorite social cocktail: Tweet-infused insults.<br/><br/>
-        Our epoch begins at 2015's Trump Tower escalator descent, where we pick up on Trump discussing rivals, Muslims, Mexicans, women, the LGBT community, and more. As the story unfolds, we explore content from Twitter's linguistic-artisan-in-chief.
+        <i>The New York Times</i> recently published an <a href="https://www.nytimes.com/interactive/2016/01/28/upshot/donald-trump-twitter-insults.html" target="_blank">article</a> chronicling Trump’s oft-used mode of communication, Twitter.
+        <br></br>
+        Beginning at the escalator descent of 2015—the memorable unveiling of his intention to court presidential candidacy—we dissect Trump's Twitter insults targeting Muslims, Mexicans, women, the LGBT community, Hillary Clinton and more.
+        <br></br>
+        <img src="./img/noun_118616_cc.png" alt="scroll down" style="width:50px; align-items: center; justify-content: center;" id="scroll_img">
       </section>
       <section class="step">
-        <div class="title">Trump Slings Insults</div>
-        Dignity, honor, integrity—these are great topics, but not the present thread. Each of the nodes in this graph represent an insult directly sent from Trump's personal Twitter account.
-        Trump has publicly logged over 2,200 insults on Twitter since he announced his candidacy in June, 2015.
+        <div class="title">Presidential Power</div>
+        A president’s words can ripple across the globe, which lends artful political discourse a reason to employ a carefully crafted practice. Each phrase can be weighed to seek understanding, intent, and meaning.
+        <br></br>
+        In this matrix of nodes, each dot depicts a single insult from Trump’s personal Twitter account, @realDonaldTrump.
+        <br></br>
+        <img src="./img/noun_118616_cc.png" alt="scroll down" style="width:50px; align-items: center; justify-content: center;" id="scroll_img">
       </section>
 
       <section class="step">
-        <div class="title">Categorical Insults</div>
-        The lion's share of Trump's insults were directed at news organizations and politicians.
-      </section>
-      <section class="step">
-        <div class="title">Insult Recipients</div>
-        On Twitter, Trump fulminated on over 300 people, places, organizations, and inanimate objects—all while wearing respectable titles such as Presidential Candidate, President Elect, and ultimately President of the United States. Trump continues to find new targets.
+        <div class="title">Thousands of Insults</div>
+        Since June 2015, Trump has logged over 2,200 insults on Twitter.
+        <br></br>
+        <img src="./img/noun_118616_cc.png" alt="scroll down" style="width:50px; align-items: center; justify-content: center;" id="scroll_img">
       </section>
       <section class="step">
         <div class="title">Individual Targets</div>
-        Several individuals and organizations stand out as prized insult targets. Among them, Hillary Clinton received the most of Trump's attention; she raked in over 430 verbal attacks (that's 20% of the total). <i>The New York Times</i> was top among the news world, but as the graph shows, they were not alone; The Donald has consistently looked down upon the media. Bernie came into focus after Trump trounced his repubican rivals. The final graph on this page shows Trump finding time at the start of his presidency to criticize SNL.
+        Over 300 people, places and things were victims of Trump’s Twitter taunts, scoffs and snubs. His new title as the President of the United States has failed to stem the tide of insult-containing Tweets from Trump’s personal account. At last count he had 24.8 million followers.
+        <br></br>
+        <img src="./img/noun_118616_cc.png" alt="scroll down" style="width:50px; align-items: center; justify-content: center;" id="scroll_img">
+      </section>
+      <section class="step">
+        <div class="title">Categorical Thinking</div>
+        The lion's share of Trump's insults were directed toward U.S. politicians, with myriad news organizations and reporters coming in at a close second.
+        <br></br>
+        <img src="./img/noun_118616_cc.png" alt="scroll down" style="width:50px; align-items: center; justify-content: center;" id="scroll_img">
       </section>
       <section class="step">
         <div class="title">Insults counts</div>
-        The single insult remains farily popular in a Trumped-up Twitterverse. Over 700 people or organizations received a single insult. Unlike the counts in single digits, Hillary is all alone sitting at a whopping 400+ insults.
+        Hillary Clinton received the brunt of Trump’s Twitter insults, receiving 430 attacks—20 percent of total insults examined in this data set. Prior to becoming the Republican nominee, Trump frequently lashed out at his party opponents, quickly stamping each politician with a moniker such as “Lyin’ Ted,” “Little Marco,” and “Low Energy Jeb”—nicknames that Trump propagated on Twitter and throughout his campaign.
+        <br></br>
+        Mainstream media outlets—particularly The New York Times and CNN—were also targets. Trump often called such organizations “dishonest,” “bias,” and in The New York Time’s case, “failing.” Subscribers to the publication are over 3 million—a record-high readership.
+        <br></br>
+        Trump even devoted four Tweets (which contained 12 insults) to bashing Saturday Night Live’s response to the presidency.
+        <br></br>
+        <img src="./img/noun_118616_cc.png" alt="scroll down" style="width:50px; align-items: center; justify-content: center;" id="scroll_img">
       </section>
       <section class="step">
-        <div class="title">STILL THE END</div>
-        More ending text.
+        <div class="title">Individuals per Insult Count</div>
+        Jenna to add text.
+        <br></br>
+        <img src="./img/noun_118616_cc.png" alt="scroll down" style="width:50px; align-items: center; justify-content: center;" id="scroll_img">
       </section>
       <section class="step">
-        <div class="title">You're still here?</div>
-        Wow. Seriously. It's done.
+        <div class="title">Multiple Insults per Tweet</div>
+        Jenna to add text.
+        <br></br>
+        <img src="./img/noun_118616_cc.png" alt="scroll down" style="width:50px; align-items: center; justify-content: center;" id="scroll_img">
       </section>
       <section class="step">
         <div class="title">Good Lord</div>

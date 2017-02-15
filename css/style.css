@@ -16,8 +16,12 @@
   padding-bottom: 200px;
 }
 
+#scroll_img{
+margin-left:2.5cm;
+opacity: 0.20;
+}
 .step {
-  margin-bottom: 200px;
+  margin-bottom: 300px;
   font-family: "TiemposTextWeb-Regular","Georgia";
   font-size: 16px;
   line-height: 23px;
@@ -51,11 +55,14 @@
 #vis .title {
   font-size:100px;
   text-anchor: middle;
+  z-index:20
 }
 
 #vis .sub-title {
-  font-size:55px;
+  font-size:45px;
   text-anchor: middle;
+  stroke: #eee;
+  stroke-width: 1px;
 }
 
 .axis path,
@@ -66,7 +73,8 @@
 }
 
 .highlight {
-  fill: #008080;
+  /*fill: #008080;*/
+  fill: #55acee;
   font-weight: bold;
 }
 
@@ -76,4 +84,11 @@
 
 }
 
+.twitter-tweet {
+    opacity:0;
+  /*
+    display: none;
+    z-index: -1
+    */
+}
 
