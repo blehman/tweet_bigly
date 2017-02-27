@@ -113,7 +113,7 @@ function scroller() {
       dispatch.call("active",this,sectionIndex);
       currentIndex = sectionIndex;
     }
-
+    // section specific progress (not currently used)
     var prevIndex = Math.max(sectionIndex - 1, 0);
     var prevTop = sectionPositions[prevIndex];
     var progress = (pos - prevTop) / (sectionPositions[sectionIndex] - prevTop);
@@ -140,8 +140,6 @@ function scroller() {
   // which will interally be handled by
   // the dispatcher.
   // Copies a variable number of methods from source to target.
-
-
   d3.rebind(scroll, dispatch, "on");
 
   return scroll;

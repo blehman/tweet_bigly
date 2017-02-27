@@ -1,54 +1,3 @@
-
-// Closure
-(function() {
-  /**
-   * Decimal adjustment of a number.
-   *
-   * @param {String}  type  The type of adjustment.
-   * @param {Number}  value The number.
-   * @param {Integer} exp   The exponent (the 10 logarithm of the adjustment base).
-   * @returns {Number} The adjusted value.
-   */
-  function decimalAdjust(type, value, exp) {
-    // If the exp is undefined or zero...
-    if (typeof exp === 'undefined' || +exp === 0) {
-      return Math[type](value);
-    }
-    value = +value;
-    exp = +exp;
-    // If the value is not a number or the exp is not an integer...
-    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
-      return NaN;
-    }
-    // Shift
-    value = value.toString().split('e');
-    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
-    // Shift back
-    value = value.toString().split('e');
-    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
-  }
-
-  // Decimal round
-  if (!Math.round10) {
-    Math.round10 = function(value, exp) {
-      return decimalAdjust('round', value, exp);
-    };
-  }
-  // Decimal floor
-  if (!Math.floor10) {
-    Math.floor10 = function(value, exp) {
-      return decimalAdjust('floor', value, exp);
-    };
-  }
-  // Decimal ceil
-  if (!Math.ceil10) {
-    Math.ceil10 = function(value, exp) {
-      return decimalAdjust('ceil', value, exp);
-    };
-  }
-})();
-
-
 // add elements in which to place the chart
 function network(visData){
 
@@ -200,22 +149,8 @@ function network(visData){
             d.hist_index = hist_index_lookup[d.name]
             d.threshold = thresholds[hist_index_lookup[d.name]]
         })
-/*
-        data.map(function(d,i){
-          //console.log(['xHistScale(d.threshold))',xHistScale(d.threshold)])
-          console.log(d.hist_index)
-          console.log(d.name)
-          console.log(yHistScale_array.length)
-          console.log(['yHistScale_array[d.hist_index](d.name))',yHistScale_array[d.hist_index](d.name)])
-        })
-*/
-//        console.log(yHistScale_array)
-
-        //var group_counts_minmax = d3.extent( data_groups.forEach(d => group_counts[d]) )
-        //console.log(group_counts_minmax)
 
         var rangeX = d3.range(margin.left+(width*pStart),width*pEnd,(width*pDiff)/(data_groups.length))
-          //, rangeY = d3.range(margin.left+(height*pStart),height*pEnd,(height*pDiff)/(data_groups.length))
           , rangeY = d3.range((height*pStart),height*pEnd,(height*pDiff)/(data_groups.length))
 
         positionXScale = d3.scaleOrdinal().domain(data_groups).range(rangeX)
@@ -228,7 +163,6 @@ function network(visData){
 
         data.forEach(function(d,i){
           if (!grid_lookup[d.name]){
-            //console.log([d.name,counter,counter%gridLength,gridXScale(d.name),gridYScale(counter%gridLength)])
             grid_lookup[d.name] = [gridXScale(d.name),gridYScale(row)]
             counter+=1
             if (counter%gridLength ==0 & counter!=0){
@@ -236,9 +170,6 @@ function network(visData){
             }
           }
         })
-        //console.log(grid_lookup)
-        //console.log(d3.range(0,width,width/gridLength))
-        //console.log(width)
         var total_counts = d3.sum(Object.values(group_counts))
 
         // dynamic y scale for bar graphs
@@ -251,13 +182,9 @@ function network(visData){
               //.range([height*0.80, height - (height*0.80*(group_counts[d.group]/total_counts))]);
               .range([hfactor,(hfactor*(1-(group_counts[d.group]/total_counts)))*fudge]);
         }
-        //console.log(group_dates)
         hbar_xScale = d3.scaleTime()
               .domain(date_extent)
               .range([0,width*0.80])
-        //hbar_xAxis = d3.selectAll(".hbar.xAxis")
-        //        .attr("transform","translate ("+0+"," + height*pEnd  + ")")
-        //hbar_legend = d3.select(".hbar.legend");
         /*SAMPLE DATA:
           {
             "group": "US Political",
@@ -269,7 +196,7 @@ function network(visData){
             }
         */
 
-        // create simulation w/ specific collision radius
+        // create simulation
         simulation.nodes(data);
         // adjust the parameters of the simulation depending on scroll position (dispatch is used activate this update on scroll)
         updateSimulation()
@@ -296,14 +223,7 @@ function network(visData){
           .attr("stroke","white")
           .attr("stroke-opacity",0.5)
           .attr("fill-opacity",1)
-/*
-        nodes.append("image")
-          .attr("xlink:href", "https://github.com/favicon.ico")
-          .attr("x", -8)
-          .attr("y", -8)
-          .attr("width", 16)
-          .attr("height", 16);
-*/
+
         function ticked(){
           // nodes are bounded by size of the svg
           nodes
@@ -553,6 +473,7 @@ function network(visData){
     return chart;
   };
 
+  // UPDATES THE SIMULATION
   chart.sim_mode = function(s) {
     if (!arguments.length) { return sim_mode; }
     sim_mode = s;
