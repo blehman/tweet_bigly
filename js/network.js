@@ -501,6 +501,23 @@ function network(visData){
                 .alphaTarget(1)
                 .alphaMin(0.5)
                 break;
+            case "next":
+              simulation
+                .force("collision", d3.forceCollide(4))
+                .force("center",forceZero)
+                .force("charge", d3.forceManyBody().strength(-1))
+                .force("hillaryY", forceZero)
+                .force("NYTimesY", forceZero)
+                .force("cruzY", forceZero)
+                .force("randoY", forceZero)
+                .force("mainstreamY", forceZero)
+                .force("x", forceZero)
+                //.force("x", d3.forceX(d => d.cx))
+                .force("y", forceZero)
+                .alphaDecay(0.4)
+                .alphaTarget(1)
+                .alphaMin(0.5)
+                break;
 
           }
         }

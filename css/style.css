@@ -92,3 +92,10 @@ opacity: 0.20;
     */
 }
 
+.text.xAxis2{
+  font-family: "TiemposTextWeb-Regular","Georgia";
+  font-size: 12px;
+  line-height: 23px;
+  fill: #767678;
+  text-anchor:end
+}

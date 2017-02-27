@@ -201,7 +201,7 @@ var scrollVis = function(trumpVisData) {
     g.append("g")
         .attr("class","hbar xAxis")
         .attr("opacity",0)
-        .attr("transform","translate ("+0+"," + Net.height()*Net.pEnd()  + ")")
+        .attr("transform","translate ("+3+"," + Net.height()*Net.pEnd()  + ")")
         .call(d3.axisBottom(Net.hbar_xScale()));
 
     // hbar legend
@@ -225,7 +225,7 @@ var scrollVis = function(trumpVisData) {
         .data(Net.group_array())
        .enter().append('text')
         .attr("fill","#767678")
-        .attr("x",height*0.99)
+        .attr("x",height*1.0)
         .attr("y", d => Net.positionYScale()(d.group)+3)
         .attr("font-size", "13px")
         .text(d=>d.group);
@@ -238,11 +238,11 @@ var scrollVis = function(trumpVisData) {
         .call(d3.axisBottom(Net.hbar_xScale()));
     // Hillary image
     g.insert("image",":first-child")
-      .attr("class","hbar_breakout TheHill")
+      .attr("class","TheHill")
       .attr("xlink:href","img/hillary_clinton_2.jpg")
       .attr("x",Net.width()*0.80)
       .attr("y",Net.height()*.13)
-      .attr("opacity",0)
+      .style("opacity",0)
       .attr("width","80px")
     // NYTimes image
     g.insert("image",":first-child")
@@ -387,7 +387,38 @@ var scrollVis = function(trumpVisData) {
             if (Net.sim_mode() == "explode"){
               opacity=1;
             }
-            d3.selectAll(".twitter-tweet").style("opacity",opacity)
+            d3.selectAll("#twitter-widget-0").style("opacity",opacity)
+        })
+      }
+    )
+    // create foreignObject container
+    g.insert("g",":first-child")
+      .attr("id","foreignObject_container")
+     .insert("foreignObject",":first-child")
+      .attr("id","tweet_render_news")
+      .attr("x",width*0.145)
+      .attr("y",height*0.22)
+      .attr("width",450);
+
+    twttr.ready(
+      function (twttr) {
+        twttr.widgets.createTweet(
+          '835325771858251776',
+          document.getElementById('tweet_render_news'),
+          {
+            theme: ''
+            , conversation: 'none'
+            , dnt: true
+            , hide_thread: true
+          }
+        );
+        //tweet opacity to 0
+        twttr.events.bind('rendered', function (event) {
+            var opacity=0;
+            if (Net.sim_mode() == "next"){
+              opacity=1;
+            }
+            d3.selectAll("#twitter-widget-1").style("opacity",opacity)
         })
       }
     )
@@ -435,6 +466,12 @@ var scrollVis = function(trumpVisData) {
       .attr("opacity",0)
       .attr("transform","translate ("+0+"," + (Net.height_max()+5.0)  + ")")
       .call(d3.axisBottom(Net.xHistScale()));
+
+    g.append("text")
+      .attr("class","text xAxis2")
+      .attr("opacity",0)
+      .attr("transform","translate ("+325+"," + (Net.height_max()+36.0)  + ")")
+      .text("Total Insults per Subject");
 
     // count openvis title
     g.append("text")
@@ -507,7 +544,7 @@ var scrollVis = function(trumpVisData) {
     activateFunctions[5] = showHistPart;
     activateFunctions[6] = showHistAll;
     activateFunctions[7] = showTweet;
-    activateFunctions[8] = showHistAll;
+    activateFunctions[8] = theEnd;
 
     // updateFunctions are called while
     // in a particular section to update
@@ -574,9 +611,10 @@ var scrollVis = function(trumpVisData) {
       .attr("opacity", 0);
 
     g.selectAll(".hbar_breakout")
-      .transition()
-      .duration(0)
       .attr("opacity", 0);
+
+    d3.select(".TheHill")
+      .style("opacity",0);
 
     g.selectAll(".square")
       .transition()
@@ -608,7 +646,8 @@ var scrollVis = function(trumpVisData) {
       .duration(0)
       .style("opacity", 0);
 
-    d3.selectAll(".twitter-tweet").style("opacity",0)
+    d3.selectAll("#twitter-widget-0").style("opacity",0)
+    d3.selectAll("#twitter-widget-1").style("opacity",0)
 
   }
 
@@ -638,7 +677,7 @@ var scrollVis = function(trumpVisData) {
   function showFillerTitle() {
     opacityZero()
     Net.sim_mode("explode")
-    d3.selectAll(".twitter-tweet")
+    d3.selectAll("#twitter-widget-0")
       .transition()
       .duration(0)
       .style("opacity",1)
@@ -712,7 +751,7 @@ var scrollVis = function(trumpVisData) {
    *
    */
   function showHistPart() {
-     Net.sim_mode("hbar_breakout")
+    Net.sim_mode("hbar_breakout")
     // ensure bar axis is set
     //showAxis(xAxisBar);
     opacityZero()
@@ -721,6 +760,13 @@ var scrollVis = function(trumpVisData) {
       .transition()
       .duration(600)
       .attr("opacity", 1);
+
+    d3.select(".TheHill")
+      .transition()
+      .duration(600)
+      .attr("x",Net.width()*0.80)
+      .attr("y",Net.height()*.13)
+      .style("opacity",1)
 
     // switch the axis to histogram one
     //Net.sim_mode("hist")
@@ -734,30 +780,41 @@ var scrollVis = function(trumpVisData) {
 
     opacityZero()
 
-    g.selectAll(".histogram.xAxis2")
+    d3.select(".TheHill")
+      .transition()
+      .duration(1000)
+      .attr("x",Net.width()*0.80)
+      .attr("y",Net.height()*.355)
+      .style("opacity",1);
+
+    g.selectAll(".xAxis2")
       .transition()
       .duration(600)
       .attr("opacity", 1);
 
-    g.selectAll(".histogram_txt")
-      .transition()
-      .duration(0)
-      .style("opacity", 1);
   }
 
   function showTweet() {
     opacityZero()
-    Net.sim_mode("explode")
-    d3.selectAll(".twitter-tweet")
+    Net.sim_mode("next")
+    d3.selectAll("#twitter-widget-1")
       .transition()
       .duration(0)
       .style("opacity",1)
 
   }
 
-  function showAxis(axis) {
+  function theEnd() {
     opacityZero()
-
+    Net.sim_mode("center")
+    console.log("TEST")
+    d3.select("#viz_container")
+      .transition()
+      .delay(500)
+      .attr("splode",function(){
+        Net.sim_mode("center")
+        return "sploded";
+      })
   }
 
   function hideAxis() {
