@@ -99,3 +99,9 @@ opacity: 0.20;
   fill: #767678;
   text-anchor:end
 }
+.histNum{
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  line-height: 1.42857143;
+  color: #333;
+  font-size: 10px;
+}

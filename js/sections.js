@@ -99,15 +99,14 @@ var scrollVis = function() {
       .attr("x",width*0.56)
       .attr("y",height*-0.05)
 
-    // count openvis title
     g.append("text")
-      .attr("class", "sub-title openvis-title")
+      .attr("class", "sub-title viz-title")
       .attr("x", width / 2)
       .attr("y", height / 1.4 + (height / 5))
       .text("June 2015 - Jan 2017");
 
     g.append("text")
-      .attr("class", "title openvis-title highlight")
+      .attr("class", "title viz-title highlight ending")
       .attr("x", width / 2)
       .attr("y", (height / 3) )
       //.attr("stroke","white")
@@ -117,7 +116,7 @@ var scrollVis = function() {
       .style("stroke-width","0.4px");
 
     g.append("text")
-      .attr("class", "title openvis-title highlight")
+      .attr("class", "title viz-title highlight ending")
       .attr("x", width / 2)
       .attr("y", (height / 2) )
       //.attr("stroke","white")
@@ -126,7 +125,7 @@ var scrollVis = function() {
       .style("stroke","#444")
       .style("stroke-width","0.4px");
 
-    g.selectAll(".openvis-title")
+    g.selectAll(".viz-title")
       .attr("opacity", 0);
 
     // bar text & axis
@@ -270,8 +269,8 @@ var scrollVis = function() {
       .attr("id","foreignObject_container")
      .insert("foreignObject",":first-child")
       .attr("id","tweet_render")
-      .attr("x",width*0.160)
-      .attr("y",height*0.22)
+      .attr("x",width*0.22)
+      .attr("y",height*0.30)
       .attr("width",450);
 
     // render Tweet in foreign object
@@ -302,8 +301,8 @@ var scrollVis = function() {
       .attr("id","foreignObject_container")
      .insert("foreignObject",":first-child")
       .attr("id","tweet_render_news")
-      .attr("x",width*0.160)
-      .attr("y",height*0.22)
+      .attr("x",width*0.22)
+      .attr("y",height*0.30)
       .attr("width",450);
 
     twttr.ready(
@@ -370,7 +369,7 @@ var scrollVis = function() {
       .attr("transform","translate ("+325+"," + (Net.height_max()+36.0)  + ")")
       .text("Total Insults per Subject");
 
-    // count openvis title
+    // count viz title
     g.append("text")
       .attr("class", "sub-title histogram_txt")
       .attr("opacity",0)
@@ -378,16 +377,43 @@ var scrollVis = function() {
       .attr("y", height / 3 + (height / 5) )
       .text("");
 
+    g.append("text")
+      .attr("x",-20)
+      .attr("y",10)
+      .text("260")
+      .attr("class","histNum xAxis2");
+
+    g.append("path")
+      .attr("d","M-6,20L0.9,20L0.9,1L-6,1")
+      .style("stroke","black")
+      .style("fill","none")
+      .attr("class","xAxis2");
+
     var yHistAxis = d3.axisLeft(Net.yHistScale2())
       .tickValues([1,5,10,15,20,25])
 
     g.append("g")
-        .attr("class","histogram xAxis2")
-        .attr("opacity",0)
-        .attr("transform","translate ("+ 0 +"," + 0 + ")")
-        .call(yHistAxis);
+      .attr("class","histogram xAxis2")
+      .attr("opacity",0)
+      .attr("transform","translate ("+ 0 +"," + 0 + ")")
+      .call(yHistAxis);
 
-
+    g.append("text")
+      .attr("class", "sub-title ending")
+       .attr("opacity",0)
+      .attr("x", width / 4.5)
+      .attr("y", height / 1.4 + (height / 5))
+      .text("by");
+    // count viz title
+    g.append("text")
+       .attr("opacity",0)
+      .attr("class", "sub-title ending")
+      .attr("x", width / 2)
+      .attr("y", height / 1.4 + (height / 5))
+      .text("\u00A0\u00A0\u00A0 @BrianLehman")
+      .style("fill","#0645AD")
+      .style("cursor","pointer")
+      .on("click", function(){window.open("https://twitter.com/BrianLehman");});
   };
 
   /**
@@ -453,15 +479,20 @@ var scrollVis = function() {
       .duration(0)
       .attr("opacity", 0);
 
-    g.selectAll(".openvis-title")
+    g.selectAll(".tweet_render")
+      .transition()
+      .duration(0)
+      .style("opacity",0);
+
+    g.selectAll(".viz-title")
       .transition()
       .duration(0)
       .attr("opacity", 0.0);
 
-    g.selectAll(".TheDonald")
+    g.selectAll(".ending")
       .transition()
-      .duration(1000)
-      .attr("opacity", 0);
+      .duration(0)
+      .attr("opacity", 0.0);
 
     g.selectAll(".bar-text")
       .transition()
@@ -512,13 +543,17 @@ var scrollVis = function() {
     d3.selectAll("#twitter-widget-0").style("opacity",0)
     d3.selectAll("#twitter-widget-1").style("opacity",0)
 
+    g.selectAll(".TheDonald")
+      .transition()
+      .duration(1000)
+      .attr("opacity", 0);
   }
 
   function showTitle() {
     Net.sim_mode("center")
     opacityZero()
 
-    g.selectAll(".openvis-title")
+    g.selectAll(".viz-title")
       .transition()
       .duration(600)
       .attr("opacity", 1.0);
@@ -634,11 +669,20 @@ var scrollVis = function() {
 
   function theEnd() {
     opacityZero()
+    d3.selectAll(".ending")
+      .transition()
+      .duration(1)
+      .attr("opacity",1);
+    d3.selectAll(".title.viz-title.highlight.ending")
+      .transition()
+      .duration(1)
+      .attr("opacity",1);
+      //.attr("class", "title viz-title highlight")
     Net.sim_mode("center")
   }
   function credits() {
+    Net.sim_mode("explode")
     opacityZero()
-    Net.sim_mode("center")
   }
 
   /**
