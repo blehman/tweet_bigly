@@ -269,7 +269,7 @@ var scrollVis = function() {
       .attr("id","foreignObject_container")
      .insert("foreignObject",":first-child")
       .attr("id","tweet_render")
-      .attr("x",width*0.22)
+      .attr("x",width*0.16)
       .attr("y",height*0.30)
       .attr("width",450);
 
@@ -301,7 +301,7 @@ var scrollVis = function() {
       .attr("id","foreignObject_container")
      .insert("foreignObject",":first-child")
       .attr("id","tweet_render_news")
-      .attr("x",width*0.22)
+      .attr("x",width*0.16)
       .attr("y",height*0.30)
       .attr("width",450);
 
