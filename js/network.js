@@ -170,6 +170,7 @@ function network(visData){
             }
           }
         })
+        Object.values = Object.values || (obj => Object.keys(obj).map(key => obj[key]));
         var total_counts = d3.sum(Object.values(group_counts))
 
         // dynamic y scale for bar graphs
